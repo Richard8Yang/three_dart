@@ -18,7 +18,7 @@ class WebGLTextures {
 
   final Map _videoTextures = {};
 
-  final WeakMap _sources = WeakMap(); 
+  final WeakMap _sources = WeakMap();
   // maps WebglTexture objects to instances of Source
 
   Map<int, int> wrappingToGL = {};
@@ -143,21 +143,15 @@ class WebGLTextures {
       if (glType == gl.FLOAT) internalFormat = gl.R32F;
       if (glType == gl.HALF_FLOAT) internalFormat = gl.R16F;
       if (glType == gl.UNSIGNED_BYTE) internalFormat = gl.R8;
-    }
-
-    if (glFormat == _gl.RG) {
+    } else if (glFormat == _gl.RG) {
       if (glType == _gl.FLOAT) internalFormat = _gl.RG32F;
       if (glType == _gl.HALF_FLOAT) internalFormat = _gl.RG16F;
       if (glType == _gl.UNSIGNED_BYTE) internalFormat = _gl.RG8;
-    }
-
-    if (glFormat == _gl.RGB) {
+    } else if (glFormat == _gl.RGB) {
       if (glType == _gl.FLOAT) internalFormat = _gl.RGB32F;
       if (glType == _gl.HALF_FLOAT) internalFormat = _gl.RGB16F;
       if (glType == _gl.UNSIGNED_BYTE) internalFormat = _gl.RGB8;
-    }
-
-    if (glFormat == gl.RGBA) {
+    } else if (glFormat == gl.RGBA) {
       if (glType == gl.FLOAT) internalFormat = gl.RGBA32F;
       if (glType == gl.HALF_FLOAT) internalFormat = gl.RGBA16F;
       if (glType == gl.UNSIGNED_BYTE) {
@@ -167,6 +161,10 @@ class WebGLTextures {
       }
       if (glType == _gl.UNSIGNED_SHORT_4_4_4_4) internalFormat = _gl.RGBA4;
       if (glType == _gl.UNSIGNED_SHORT_5_5_5_1) internalFormat = _gl.RGB5_A1;
+    } else if (glFormat == gl.LUMINANCE) {
+      internalFormat = _gl.LUMINANCE;
+    } else if (glFormat == gl.LUMINANCE_ALPHA) {
+      internalFormat = _gl.LUMINANCE_ALPHA;
     }
 
     if (internalFormat == gl.R16F ||
@@ -935,9 +933,12 @@ class WebGLTextures {
       var mipmap;
       var mipmaps = texture.mipmaps;
 
-      var useTexStorage = (isWebGL2 && texture is! VideoTexture);
+      var useTexStorage =
+          (isWebGL2 && texture is! VideoTexture && !texture.forceInitOnce);
       var allocateMemory = (textureProperties["__version"] == null);
       var levels = getMipLevels(texture, image, supportsMips);
+
+      texture.forceInitOnce = false;
 
       if (texture is DepthTexture) {
         // populate depth texture with dummy data
@@ -1882,8 +1883,7 @@ class WebGLTextures {
 
     setTexture2D(depthTexture, 0);
 
-    var webglDepthTexture =
-        properties.get(depthTexture)["__webglTexture"];
+    var webglDepthTexture = properties.get(depthTexture)["__webglTexture"];
     var samples = getRenderTargetSamples(renderTarget);
 
     if (depthTexture.format == DepthFormat) {

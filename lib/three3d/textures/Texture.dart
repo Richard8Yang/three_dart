@@ -18,6 +18,7 @@ class Texture with EventDispatcher {
   bool needsPMREMUpdate =
       false; // indicates whether this texture should be processed by PMREMGenerator or not (only relevant for render target textures)
 
+  bool forceInitOnce = false;
 
   late Source source;
 
@@ -63,8 +64,17 @@ class Texture with EventDispatcher {
 
   List mipmaps = [];
 
-  Texture([image, int? mapping, int? wrapS, int? wrapT, int? magFilter,
-      int? minFilter, int? format, int? type, int? anisotropy, int? encoding]) {
+  Texture(
+      [image,
+      int? mapping,
+      int? wrapS,
+      int? wrapT,
+      int? magFilter,
+      int? minFilter,
+      int? format,
+      int? type,
+      int? anisotropy,
+      int? encoding]) {
     source = Source(image);
     this.mapping = mapping ?? Texture.DEFAULT_MAPPING;
 
@@ -255,4 +265,3 @@ class ImageDataInfo {
 
   ImageDataInfo(this.data, this.width, this.height, this.depth);
 }
-
