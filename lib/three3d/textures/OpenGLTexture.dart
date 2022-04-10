@@ -3,8 +3,15 @@ part of three_textures;
 class OpenGLTexture extends Texture {
   dynamic openGLTexture;
 
-  OpenGLTexture(this.openGLTexture, mapping, wrapS, wrapT, magFilter, minFilter,
-      format, type, anisotropy)
+  OpenGLTexture(this.openGLTexture,
+      [int? mapping,
+      int? wrapS,
+      int? wrapT,
+      int? magFilter,
+      int? minFilter,
+      int? format,
+      int? type,
+      int? anisotropy])
       : super(null, mapping, wrapS, wrapT, magFilter, minFilter, format, type,
             anisotropy, null) {
     isOpenGLTexture = true;
@@ -20,7 +27,7 @@ class OpenGLTexture extends Texture {
   @override
   OpenGLTexture clone() {
     return OpenGLTexture(
-            image, null, null, null, null, null, null, null, null)
+        openGLTexture, null, null, null, null, null, null, null, null)
       ..copy(this);
   }
 

@@ -526,17 +526,7 @@ class WebGLTextures {
 
     if (textureProperties["__webglInit"] != true) {
       textureProperties["__webglInit"] = true;
-
       texture.addEventListener('dispose', onTextureDispose);
-
-      // if (texture.isOpenGLTexture) {
-      //   final _texture = texture as OpenGLTexture;
-      //   textureProperties["__webglTexture"] = _texture.openGLTexture;
-      // } else {
-      //   textureProperties["__webglTexture"] = gl.createTexture();
-      // }
-
-      // info.memory["textures"] = info.memory["textures"]! + 1;
     }
 
     // create Source <-> WebGLTextures mapping if necessary
@@ -559,10 +549,15 @@ class WebGLTextures {
       if (webglTextures[textureCacheKey] == null) {
         // create new entry
 
-        webglTextures[textureCacheKey] = {
-          "texture": _gl.createTexture(),
-          "usedTimes": 0
-        };
+        final texId;
+        if (texture.isOpenGLTexture) {
+          final _texture = texture as OpenGLTexture;
+          texId = _texture.openGLTexture;
+        } else {
+          texId = _gl.createTexture();
+        }
+
+        webglTextures[textureCacheKey] = {"texture": texId, "usedTimes": 0};
 
         info.memory["textures"] = info.memory["textures"]! + 1;
 
