@@ -257,12 +257,12 @@ class PropertyBinding {
   }
 
   // 2
-  void getValueArrayElement(List<int> buffer, int offset) {
+  void getValueArrayElement(List<num> buffer, int offset) {
     buffer[offset] = resolvedProperty[propertyIndex];
   }
 
   // 3
-  void getValueToArray(List<int> buffer, int offset) {
+  void getValueToArray(List<num> buffer, int offset) {
     resolvedProperty.toArray(buffer, offset);
   }
 
