@@ -18,7 +18,8 @@ class Texture with EventDispatcher {
   bool isDepthTexture = false;
   bool isCompressedTexture = false;
   bool isOpenGLTexture = false;
-  bool isRenderTargetTexture = false; // indicates whether a texture belongs to a render target or not
+  bool isRenderTargetTexture =
+      false; // indicates whether a texture belongs to a render target or not
   bool needsPMREMUpdate =
       false; // indicates whether this texture should be processed by PMREMGenerator or not (only relevant for render target textures)
 
@@ -97,6 +98,10 @@ class Texture with EventDispatcher {
   get image => source.data;
   set image(value) => source.data = value;
 
+  @override
+  String toString() =>
+      "Texture<$type:$format:$encoding [${image.runtimeType} $image]>";
+
   set needsUpdate(bool value) {
     if (value) {
       version++;
@@ -105,7 +110,8 @@ class Texture with EventDispatcher {
   }
 
   updateMatrix() {
-    matrix.setUvTransform(offset.x, offset.y, repeat.x, repeat.y, rotation, center.x, center.y);
+    matrix.setUvTransform(
+        offset.x, offset.y, repeat.x, repeat.y, rotation, center.x, center.y);
   }
 
   Texture clone() {
@@ -158,7 +164,11 @@ class Texture with EventDispatcher {
     }
 
     Map<String, dynamic> output = {
-      "metadata": {"version": 4.5, "type": 'Texture', "generator": 'Texture.toJSON'},
+      "metadata": {
+        "version": 4.5,
+        "type": 'Texture',
+        "generator": 'Texture.toJSON'
+      },
       "uuid": uuid,
       "name": name,
       "image": source.toJSON(meta).uuid,

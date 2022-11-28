@@ -21,4 +21,7 @@ class ImageElement {
   dispose() {
     data?.dispose();
   }
+
+  String toString() =>
+      "${width}x${height}@${depth} $url (${data.runtimeType})";
 }

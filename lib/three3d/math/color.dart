@@ -757,4 +757,6 @@ class Color {
   int toJSON() {
     return getHex();
   }
+
+  String toString() => "Color<${getHexString()}>";
 }
