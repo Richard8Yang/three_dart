@@ -228,7 +228,7 @@ class PropertyBinding {
   _getValueUnavailable() {}
   _setValueUnavailable() {}
 
-  void Function(List<int>, int) getterByBindingType(int idx) {
+  void Function(List<num>, int) getterByBindingType(int idx) {
     if (idx == 0) {
       return getValueDirect;
     } else if (idx == 1) {
@@ -243,13 +243,13 @@ class PropertyBinding {
   }
 
   // 0
-  void getValueDirect(List<int> buffer, int offset) {
+  void getValueDirect(List<num> buffer, int offset) {
     var v = targetObject.getProperty(propertyName);
     buffer[offset] = v;
   }
 
   // 1
-  void getValueArray(List<int> buffer, int offset) {
+  void getValueArray(List<num> buffer, int offset) {
     var source = resolvedProperty;
     for (var i = 0, n = source.length; i != n; ++i) {
       buffer[offset++] = source[i];
