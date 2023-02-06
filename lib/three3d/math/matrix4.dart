@@ -823,6 +823,12 @@ class Matrix4 {
     return elements.sublist(0);
   }
 
+  @override
+  String toString() {
+    List arrayList = toJSON();
+    return "$arrayList";
+  }
+
   Matrix4 getInverse(Matrix4 matrix) {
     print('three.Matrix4: .getInverse() has been removed. Use matrixInv.copy( matrix ).invert(); instead.');
     return copy(matrix).invert();

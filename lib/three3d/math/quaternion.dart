@@ -32,6 +32,12 @@ class Quaternion {
     return [_x, _y, _z, _w];
   }
 
+  @override
+  String toString() {
+    List arrayList = toJSON();
+    return "$arrayList";
+  }
+
   static Quaternion staticSlerp(Quaternion qa, Quaternion qb, Quaternion qm, num t) {
     print(
         'three.Quaternion: Static .slerp() has been deprecated. Use is now qm.slerpQuaternions( qa, qb, t ) instead.');

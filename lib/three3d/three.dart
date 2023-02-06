@@ -22,5 +22,7 @@ export './constants.dart';
 
 export './weak_map.dart';
 
+export './ik/index.dart';
+
 export 'three_helper.dart';
 export 'dart_helpers.dart';

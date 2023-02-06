@@ -127,10 +127,13 @@ class _MyAppState extends State<WebGlLoaderGlb> {
                 child: Builder(builder: (BuildContext context) {
                   if (kIsWeb) {
                     return three3dRender.isInitialized
-                        ? HtmlElementView(viewType: three3dRender.textureId!.toString())
+                        ? HtmlElementView(
+                            viewType: three3dRender.textureId!.toString())
                         : Container();
                   } else {
-                    return three3dRender.isInitialized ? Texture(textureId: three3dRender.textureId!) : Container();
+                    return three3dRender.isInitialized
+                        ? Texture(textureId: three3dRender.textureId!)
+                        : Container();
                   }
                 })),
           ],
@@ -184,7 +187,8 @@ class _MyAppState extends State<WebGlLoaderGlb> {
 
     if (!kIsWeb) {
       var pars = three.WebGLRenderTargetOptions({"format": three.RGBAFormat});
-      renderTarget = three.WebGLMultisampleRenderTarget((width * dpr).toInt(), (height * dpr).toInt(), pars);
+      renderTarget = three.WebGLMultisampleRenderTarget(
+          (width * dpr).toInt(), (height * dpr).toInt(), pars);
       renderTarget.samples = 4;
       renderer!.setRenderTarget(renderTarget);
       sourceTexture = renderer!.getRenderTargetGLTexture(renderTarget);
@@ -203,6 +207,8 @@ class _MyAppState extends State<WebGlLoaderGlb> {
     // scene
 
     scene = three.Scene();
+    scene.background = three.Color(0xcccccc);
+    scene.fog = three.FogExp2(0xcccccc, 0.002);
 
     var ambientLight = three.AmbientLight(0xffffff, 0.9);
     scene.add(ambientLight);
@@ -217,19 +223,39 @@ class _MyAppState extends State<WebGlLoaderGlb> {
     camera.lookAt(scene.position);
 
     var loader = three_jsm.GLTFLoader(null).setPath('assets/models/gltf/');
+    // Support for KTX2/DDS textures
+    //loader.setKTX2Loader();
+    //loader.setDDSLoader();
 
-    var result = await loader.loadAsync('coffeemat.glb');
-    // var result = await loader.loadAsync( 'BoomBox.glb' );
-    // var result = await loader.loadAsync('untitled.glb');
+    var result = await loader.loadAsync('Bee.glb');
+    //var result = await loader.loadAsync('BoomBox.glb');
+    //var result = await loader.loadAsync('coffeemat.glb');
 
     print(" gltf load sucess result: $result  ");
 
     object = result["scene"];
 
-    object.scale.set(80, 80, 80);
+    object.traverse((child) {
+      print("child=$child");
+    });
+
+    object.scale.set(0.4, 0.4, 0.4);
     object.rotation.set(0, 180 * three.Math.pi / 180.0, 0);
 
     scene.add(object);
+
+    var skeleton = three.SkeletonHelper(result["scene"]);
+    skeleton.visible = true;
+    scene.add(skeleton);
+
+    var animations = result["animations"];
+
+    mixer = three.AnimationMixer(object);
+
+    var action = mixer!.clipAction(animations[0]);
+    print("action=$action");
+
+    action!.play();
 
     // scene.overrideMaterial = new three.MeshBasicMaterial();
 
@@ -249,13 +275,13 @@ class _MyAppState extends State<WebGlLoaderGlb> {
 
     var delta = clock.getDelta();
 
-    mixer?.update(delta);
+    mixer!.update(delta);
 
     render();
 
-    // Future.delayed(Duration(milliseconds: 40), () {
-    //   animate();
-    // });
+    Future.delayed(const Duration(milliseconds: 40), () {
+      animate();
+    });
   }
 
   @override

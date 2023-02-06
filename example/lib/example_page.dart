@@ -20,6 +20,7 @@ import 'package:example/webgl_helpers.dart';
 import 'package:example/webgl_instancing_performance.dart';
 import 'package:example/webgl_loader_fbx.dart';
 import 'package:example/webgl_loader_gltf.dart';
+import 'package:example/webgl_loader_glb.dart';
 import 'package:example/webgl_loader_gltf_test.dart';
 import 'package:example/webgl_loader_obj.dart';
 import 'package:example/webgl_loader_obj_mtl.dart';
@@ -32,6 +33,7 @@ import 'package:example/webgl_morphtargets_sphere.dart';
 import 'package:example/webgl_shadow_contact.dart';
 import 'package:example/webgl_shadowmap_viewer.dart';
 import 'package:example/webgl_skinning_simple.dart';
+import 'package:example/webgl_ik.dart';
 import 'package:flutter/material.dart';
 
 import 'misc_controls_arcball.dart';
@@ -79,6 +81,8 @@ class _MyAppState extends State<ExamplePage> {
       page = WebGlShadowmapViewer(fileName: fileName);
     } else if (fileName == "webgl_loader_gltf") {
       page = WebGlLoaderGtlf(fileName: fileName);
+    } else if (fileName == "webgl_loader_glb") {
+      page = WebGlLoaderGlb(fileName: fileName);
     } else if (fileName == "webgl_loader_gltf_test") {
       page = WebGlLoaderGltfTest(fileName: fileName);
     } else if (fileName == "webgl_loader_obj_mtl") {
@@ -137,6 +141,8 @@ class _MyAppState extends State<ExamplePage> {
       page = MiscControlsMap(fileName: fileName);
     } else if (fileName == "webgl_loader_fbx") {
       page = WebGlLoaderFbx(fileName: fileName);
+    } else if (fileName == "webgl_ik") {
+      page = WebGlIK(fileName: fileName);
     } else if (fileName == "multi_views") {
       page = MultiViews(fileName: fileName);
     } else {

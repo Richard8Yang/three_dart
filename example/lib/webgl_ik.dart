@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -8,15 +10,15 @@ import 'package:three_dart/three3d/animation/keyframe_track.dart';
 import 'package:three_dart/three_dart.dart' as three;
 import 'package:three_dart_jsm/three_dart_jsm.dart' as three_jsm;
 
-class WebGlLoaderFbx extends StatefulWidget {
+class WebGlIK extends StatefulWidget {
   final String fileName;
-  const WebGlLoaderFbx({Key? key, required this.fileName}) : super(key: key);
+  const WebGlIK({Key? key, required this.fileName}) : super(key: key);
 
   @override
-  State<WebGlLoaderFbx> createState() => _MyAppState();
+  State<WebGlIK> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<WebGlLoaderFbx> {
+class _MyAppState extends State<WebGlIK> {
   late FlutterGlPlugin three3dRender;
   three.WebGLRenderer? renderer;
 
@@ -36,10 +38,6 @@ class _MyAppState extends State<WebGlLoaderFbx> {
 
   bool verbose = true;
   bool disposed = false;
-
-  three.Clock clock = three.Clock();
-
-  three.AnimationMixer? mixer;
 
   late three.WebGLRenderTarget renderTarget;
 
@@ -151,14 +149,6 @@ class _MyAppState extends State<WebGlLoaderFbx> {
     int t = DateTime.now().millisecondsSinceEpoch;
     final gl = three3dRender.gl;
 
-    if (mixer == null) {
-      return;
-    }
-
-    var delta = clock.getDelta();
-
-    mixer!.update(delta);
-
     renderer!.render(scene, camera);
 
     int t1 = DateTime.now().millisecondsSinceEpoch;
@@ -221,7 +211,7 @@ class _MyAppState extends State<WebGlLoaderFbx> {
     scene.fog = three.FogExp2(0xcccccc, 0.002);
 
     camera = three.PerspectiveCamera(60, width / height, 0.01, 2000);
-    camera.position.set(0, 0, 300);
+    camera.position.set(0, 0, 8);
 
     // controls
 
@@ -255,91 +245,56 @@ class _MyAppState extends State<WebGlLoaderFbx> {
     dirLight.shadow!.camera!.right = 120;
     scene.add(dirLight);
 
-    // scene.add( new three.CameraHelper( dirLight.shadow!.camera ) );
-
-    // ground
-    // var mesh = new three.Mesh( new three.PlaneGeometry( 2000, 2000 ), new three.MeshPhongMaterial( { "color": 0x999999, "depthWrite": false } ) );
-    // mesh.rotation.x = - three.Math.PI / 2;
-    // mesh.receiveShadow = true;
-    // scene.add( mesh );
-
-    // var grid = new three.GridHelper( 2000, 20, 0x000000, 0x000000 );
-    // grid.material.opacity = 0.2;
-    // grid.material.transparent = true;
-    // scene.add( grid );
-
-    //var textureLoader = three.TextureLoader(null);
-    //textureLoader.flipY = true;
-    // var diffueTexture = await textureLoader.loadAsync(
-    //     "assets/models/fbx/model_tex_u1_v1_diffuse.jpg", null);
-    // var normalTexture = await textureLoader.loadAsync(
-    //     "assets/models/fbx/model_tex_u1_v1_normal.jpg", null);
-
-    // model
-    var loader = three_jsm.FBXLoader(null, width.toInt(), height.toInt());
-    var object =
-        await loader.loadAsync('assets/models/fbx/KachujinRosales.fbx');
-    //var object = await loader.loadAsync('assets/models/fbx/StandingGreeting.fbx');
-    // var object = await loader.loadAsync( 'assets/models/fbx/model.fbx');
-    //var object = await loader.loadAsync('assets/models/fbx/SambaDancing.fbx');
-    // var object = await loader.loadAsync( 'assets/models/fbx/Falling.fbx');
-
-    object.traverse((child) {
-      if (child is three.Mesh) {
-        child.castShadow = true;
-        child.receiveShadow = true;
-      }
-    });
-
-    object.position.y -= 100;
-
-    scene.add(object);
-
-    printObjectType(object, 0);
-
-    var skeleton = three.SkeletonHelper(object);
-    skeleton.visible = true;
-    scene.add(skeleton);
-
-    mixer = three.AnimationMixer(object);
-
-    if (object.animations.length > 0) {
-      //print("Animation clip: ${object.animations[0]}");
-      //for (final track in object.animations[0].tracks) {
-      //  print("  Key frame track: $track");
-      //}
-      var action = mixer!.clipAction(object.animations[0]);
-      print("Animation Action: $action");
-      action!.play();
-    }
+    demoOfIK();
 
     animate();
   }
 
-  var middleFinger;
-  var middleFinger2;
-  var hips;
-  printObjectType(object, indent) {
-    var indentSpaces = "";
-    for (int i = 0; i < indent; i++) {
-      indentSpaces += "|";
+  final ik = three.IK();
+  final pivot = three.Object3D();
+  demoOfIK() {
+    final chain = three.IKChain();
+    final constraints = [three.IKBallConstraint(360)];
+    final bones = [];
+
+    // Create a target that the IK's effector will reach
+    // for.
+    final movingTarget = three.Mesh(three.SphereGeometry(0.1),
+        three.MeshBasicMaterial({'color': 0xff0000}));
+    movingTarget.position.z = 2;
+    pivot.add(movingTarget);
+    scene.add(pivot);
+
+    // Create a chain of three.Bone's, each wrapped as an IKJoint
+    // and added to the IKChain
+    for (int i = 0; i < 10; i++) {
+      final bone = three.Bone();
+      bone.setProperty("name", "Bone_$i");
+      bone.position.y = i == 0 ? 0 : 0.5;
+
+      // Store the bone and connect it to previous bone
+      // if it exists.
+      bones.add(bone);
+      if (i > 0) {
+        bones[i - 1].add(bones[i]);
+      }
+
+      // The last IKJoint must be added with a `target` as an end effector.
+      final target = i == 9 ? movingTarget : null;
+      chain.add(three.IKJoint(bone, constraints: constraints),
+          targetObj: target);
     }
 
-    if (object != null) {
-      //print("${indentSpaces}Object: $object children count: ${object.children.length}");
-    }
+    // Add the chain to the IK system
+    ik.add(chain);
 
-    if (object.name == "mixamorigLeftHandMiddle1") {
-      middleFinger = object;
-    } else if (object.name == "mixamorigLeftHandMiddle2") {
-      middleFinger2 = object;
-    } else if (object.name == "mixamorigSpine") {
-      hips = object;
-    }
+    // Ensure the root bone is added somewhere in the scene
+    scene.add(ik.getRootBone());
 
-    for (var i = 0; i < object.children.length; i++) {
-      printObjectType(object.children[i], indent + 1);
-    }
+    // Create a helper and add to the scene so we can visualize
+    // the bones
+    final helper = three.IKHelper(ik);
+    scene.add(helper);
   }
 
   animate() {
@@ -347,21 +302,11 @@ class _MyAppState extends State<WebGlLoaderFbx> {
       return;
     }
 
-    var delta = clock.getDelta();
-    //print("delta = $delta");
-    mixer!.update(delta);
-
-    var q = middleFinger.getProperty("quaternion");
-    q.fromArray([0.707, 0.0, 0.0, 0.707]);
-    middleFinger.matrixWorldNeedsUpdate = true;
-
-    q = middleFinger2.getProperty("quaternion");
-    q.fromArray([0.707, 0.0, 0.0, 0.707]);
-    middleFinger2.matrixWorldNeedsUpdate = true;
-
-    //q = hips.getProperty("quaternion");
-    //q.fromArray([0.259, 0.0, 0.0, 0.966]);
-    //hips.matrixWorldNeedsUpdate = true;
+    // IK test
+    pivot.rotation.x += 0.01;
+    pivot.rotation.y += 0.01;
+    pivot.rotation.z += 0.01;
+    ik.solve();
 
     render();
 
