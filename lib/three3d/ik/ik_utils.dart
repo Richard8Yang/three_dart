@@ -46,7 +46,7 @@ Vector3 getCentroid(List<Vector3> positions, Vector3 target) {
 /// Takes a direction vector and an up vector and sets
 /// `target` quaternion to the rotation. Similar to THREE.Matrix4's
 /// `lookAt` function, except rather than taking two Vector3 points,
-/// we've already calculaeld the direction earlier so skip the first half.
+/// we've already calculated the direction earlier so skip the first half.
 ///
 /// @param {THREE.Vector3} direction
 /// @param {THREE.Vector3} up

@@ -16,7 +16,7 @@ class BoneHelper extends Object3D {
     // will fall back to its default and not use 0 height.
     if (height != 0) {
       final geo = ConeGeometry(boneSize, height, 4);
-      geo.applyMatrix4(Matrix4().makeRotationAxis(Vector3(1, 0, 0), Math.pi / 2.0));
+      //geo.applyMatrix4(Matrix4().makeRotationAxis(Vector3(1, 0, 0), Math.pi / 2.0));
       boneMesh = Mesh(
           geo,
           MeshBasicMaterial({
@@ -30,7 +30,7 @@ class BoneHelper extends Object3D {
     }
 
     // Offset the bone so that its rotation point is at the base of the bone
-    boneMesh.position.z = height / 2;
+    boneMesh.position.y = height / 2;
     add(boneMesh);
 
     axesHelper = AxesHelper(axesSize);

@@ -211,8 +211,11 @@ class Euler {
 
   List<num> toJSON() {
     int orderNo = rotationOrders.indexOf(_order);
-    return [_x, _y, _z, orderNo];
+    return [_x*180/Math.pi, _y*180/Math.pi, _z*180/Math.pi, orderNo];
   }
+
+  @override
+  String toString() => "${toJSON()}";
 
   List<num> toArray([List<num>? array, int offset = 0]) {
     array ??= List<num>.filled(offset + 4, 0);

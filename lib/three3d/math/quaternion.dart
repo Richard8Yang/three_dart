@@ -323,12 +323,12 @@ class Quaternion {
     return this;
   }
 
-  Quaternion setFromUnitVectors(Vector3 vFrom, Vector3 vTo) {
+  Quaternion setFromUnitVectors(Vector3 vFrom, Vector3 vTo, [double epsilon = Math.epsilon]) {
     // assumes direction vectors vFrom and vTo are normalized
 
     var r = vFrom.dot(vTo) + 1;
 
-    if (r < Math.epsilon) {
+    if (r < epsilon) {
       r = 0;
 
       if (Math.abs(vFrom.x) > Math.abs(vFrom.z)) {

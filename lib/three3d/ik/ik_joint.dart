@@ -131,13 +131,14 @@ class IKJoint {
     if (parent != null) {
       updateMatrixWorld();
 
-      final inverseParentMat =
-          Matrix4().copy(bone.parent!.matrixWorld).invert();
+      final inverseParentMat = Matrix4().copy(parent.matrixWorld).invert();
       utils.transformPoint(position, inverseParentMat, position);
       bone.position.copy(position);
 
       updateMatrixWorld();
-      worldToLocalDirection(direction);
+
+      direction.transformDirection(inverseParentMat);
+
       utils.setQuaternionFromDirection(direction, Y_AXIS, bone.quaternion);
     } else {
       bone.position.copy(position);

@@ -62,7 +62,8 @@ class IKChain {
       }
       joint.setDistance(distance);
 
-      joint.updateWorldPosition();
+      //joint.updateWorldPosition();
+
       final direction = previousJoint.getWorldDirection(joint);
       previousJoint.setOriginalDirection(direction);
       joint.setOriginalDirection(direction);
