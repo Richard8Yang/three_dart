@@ -39,8 +39,8 @@ dependency_overrides:
     git:
       url: https://github.com/Richard8Yang/three_dart_jsm.git
       ref: main-ext
-  # flutter_gl:
-  #   path: ../../flutter_gl/flutter_gl
+  flutter_gl:
+    path: ../../flutter_gl/flutter_gl
 
 
 dev_dependencies:
