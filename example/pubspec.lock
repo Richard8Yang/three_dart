@@ -203,10 +203,10 @@ packages:
     dependency: transitive
     description:
       name: image
-      sha256: a72242c9a0ffb65d03de1b7113bc4e189686fc07c7147b8b41811d0dd0e0d9bf
+      sha256: "8e9d133755c3e84c73288363e6343157c383a0c6c56fc51afcc5d4d7180306d6"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "4.0.17"
+    version: "3.3.0"
   js:
     dependency: transitive
     description:
@@ -406,11 +406,9 @@ packages:
   three_dart_jsm:
     dependency: "direct main"
     description:
-      path: "."
-      ref: main-ext
-      resolved-ref: "95545d8f6bda1c8123b8f941b66e2677284d99d6"
-      url: "https://github.com/Richard8Yang/three_dart_jsm.git"
-    source: git
+      path: "../../three_dart_plugins/three_dart_jsm"
+      relative: true
+    source: path
     version: "0.0.10"
   typed_data:
     dependency: transitive
