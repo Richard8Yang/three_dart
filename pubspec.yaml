@@ -34,7 +34,10 @@ dependency_overrides:
       url: https://github.com/Richard8Yang/three_dart_jsm.git
       ref: main-ext
   flutter_gl:
-    path: ../flutter_gl/flutter_gl
+    git:
+      url: https://github.com/Richard8Yang/flutter_gl.git
+      ref: with-video-player
+      path: flutter_gl
 
 dev_dependencies:
   flutter_test:
